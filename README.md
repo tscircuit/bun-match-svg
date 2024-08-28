@@ -3,6 +3,8 @@
 ## Usage
 
 ```ts
+import "bun-match-svg"
+
 test("getAllDimensionsForSchematicBox 1", () => {
   const params: Parameters<typeof getAllDimensionsForSchematicBox>[0] = {
     schWidth: 1,
