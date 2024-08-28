@@ -21,3 +21,20 @@ test("getAllDimensionsForSchematicBox 1", () => {
   )
 })
 ```
+
+### Automatically preload
+
+Add a file `tests/fixtures/preload.ts` with the following content:
+
+```ts
+import "bun-match-svg"
+```
+
+Define a `bunfig.toml` file with the following content:
+
+```toml
+[test]
+preload = ["./tests/fixtures/preload.ts"]
+```
+
+Now `toMatchSvgSnapshot` will automatically be available in every test file.
