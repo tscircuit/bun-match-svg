@@ -68,6 +68,7 @@ async function toMatchSvgSnapshot(
 }
 
 expect.extend({
+  // biome-ignore lint/suspicious/noExplicitAny:
   toMatchSvgSnapshot: toMatchSvgSnapshot as any,
 })
 

@@ -13,3 +13,20 @@
     "looks-same": "^9.0.1"
   }
 }
+{
+  "name": "bun-match-svg",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "looks-same": "^8.2.0"
+  },
+  "scripts": {
+    "test": "bun test"
+  }
+}
