@@ -6,10 +6,11 @@ import looksSame from "looks-same"
 async function toMatchSvgSnapshot(
   // biome-ignore lint/suspicious/noExplicitAny: bun doesn't expose
   this: any,
-  received: string,
+  receivedMaybePromise: string | Promise<string>,
   testPathOriginal: string,
   svgName?: string,
 ): Promise<MatcherResult> {
+  const received = await receivedMaybePromise
   const testPath = testPathOriginal.replace(/\.test\.tsx?$/, "")
   const snapshotDir = path.join(path.dirname(testPath), "__snapshots__")
   const snapshotName = svgName
