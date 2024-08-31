@@ -13,6 +13,7 @@
     "looks-same": "^9.0.1"
   },
   "scripts": {
-    "test": "bun test"
+    "test": "bun test",
+    "build": "echo 'no build step'"
   }
 }
