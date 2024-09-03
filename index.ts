@@ -68,7 +68,7 @@ async function toMatchSvgSnapshot(
   }
 }
 
-async function toMatchMultipleSvgSnapshot(
+async function toMatchMultipleSvgSnapshots(
   // biome-ignore lint/suspicious/noExplicitAny: bun doesn't expose
   this: any,
   receivedMaybePromise: string[] | Promise<string[]>,
@@ -138,19 +138,18 @@ async function toMatchMultipleSvgSnapshot(
       pass: false,
     })
   }
+  let aggregatedMessage = ""
   if (failed.length === 0) {
-    let messages = ""
-    for (const result of passed) messages += `${result.message}\n`
+    for (const result of passed) aggregatedMessage += `${result.message}\n`
     return {
       pass: true,
-      message: () => messages,
+      message: () => aggregatedMessage,
     }
   }
-  let messages = ""
-  for (const result of failed) messages += `${result.message}\n`
+  for (const result of failed) aggregatedMessage += `${result.message}\n`
   return {
     pass: false,
-    message: () => messages,
+    message: () => aggregatedMessage,
   }
 }
 
@@ -158,7 +157,7 @@ expect.extend({
   // biome-ignore lint/suspicious/noExplicitAny:
   toMatchSvgSnapshot: toMatchSvgSnapshot as any,
   // biome-ignore lint/suspicious/noExplicitAny:
-  toMatchMultipleSvgSnapshot: toMatchMultipleSvgSnapshot as any,
+  toMatchMultipleSvgSnapshots: toMatchMultipleSvgSnapshots as any,
 })
 
 declare module "bun:test" {
@@ -167,7 +166,7 @@ declare module "bun:test" {
       testPath: string,
       svgName?: string,
     ): Promise<MatcherResult>
-    toMatchMultipleSvgSnapshot(
+    toMatchMultipleSvgSnapshots(
       testPath: string,
       svgNames?: string[],
     ): Promise<MatcherResult>

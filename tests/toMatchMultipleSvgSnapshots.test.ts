@@ -46,30 +46,14 @@ afterAll(() => {
   }
 })
 
-test("toMatchMultipleSvgSnapshot creates and matches snapshot", async () => {
+test("toMatchMultipleSvgSnapshots creates and matches snapshots", async () => {
   // First run: create snapshot
-  await expect(testSvgs).toMatchMultipleSvgSnapshot(import.meta.path, svgNames)
+  await expect(testSvgs).toMatchMultipleSvgSnapshots(import.meta.path, svgNames)
 
   // Verify snapshot was created
   for (const snapshotPath of snapshotPaths)
     expect(fs.existsSync(snapshotPath)).toBe(true)
 
   // Second run: match existing snapshot
-  await expect(testSvgs).toMatchMultipleSvgSnapshot(import.meta.path, svgNames)
+  await expect(testSvgs).toMatchMultipleSvgSnapshots(import.meta.path, svgNames)
 })
-
-// test("toMatchSvgSnapshot detects differences", async () => {
-//   const modifiedSvg = testSvg.replace('r="40"', 'r="30"')
-
-//   // This should fail and create a diff
-//   await expect(
-//     expect(modifiedSvg).toMatchSvgSnapshot(import.meta.path, "test")
-//   ).rejects.toThrow("Snapshot does not match")
-
-//   // Verify diff was created
-//   const diffPath = snapshotPath.replace(".snap.svg", ".diff.png")
-//   expect(fs.existsSync(diffPath)).toBe(true)
-
-//   // Clean up diff
-//   fs.unlinkSync(diffPath)
-// })
