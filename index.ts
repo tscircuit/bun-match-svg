@@ -109,7 +109,7 @@ async function toMatchMultipleSvgSnapshots(
     const existingSnapshot = fs.readFileSync(filePath, "utf-8")
 
     const result = await looksSame(
-      Buffer.from(received[index]),
+      Buffer.from(received[index] as any),
       Buffer.from(existingSnapshot),
       {
         strict: false,
