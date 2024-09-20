@@ -128,7 +128,7 @@ async function toMatchMultipleSvgSnapshots(
     const diffPath = filePath.replace(".snap.svg", ".diff.png")
     await looksSame.createDiff({
       reference: Buffer.from(existingSnapshot),
-      current: Buffer.from(received[index]),
+      current: Buffer.from(received[index] as any),
       diff: diffPath,
       highlightColor: "#ff00ff",
     })
