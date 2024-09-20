@@ -98,7 +98,7 @@ async function toMatchMultipleSvgSnapshots(
 
     if (!fs.existsSync(filePath) || updateSnapshot) {
       console.log("Writing snapshot to", filePath)
-      fs.writeFileSync(filePath, received[index])
+      fs.writeFileSync(filePath, received[index] as any)
       passed.push({
         message: `Snapshot ${svgName} created at ${filePath}`,
         pass: true,
