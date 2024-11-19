@@ -19,6 +19,7 @@
   "scripts": {
     "test": "bun test",
     "build": "echo 'no build step'",
-    "format": "biome format . --write"
+    "format": "biome format . --write",
+    "format:check": "biome format ."
   }
 }
