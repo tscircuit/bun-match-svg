@@ -25,7 +25,7 @@ async function toMatchSvgSnapshot(
   const updateSnapshot =
     process.argv.includes("--update-snapshots") ||
     process.argv.includes("-u") ||
-    Boolean(process.env.BUN_UPDATE_SNAPSHOTS)
+    Boolean(process.env["BUN_UPDATE_SNAPSHOTS"])
 
   if (!fs.existsSync(filePath) || updateSnapshot) {
     console.log("Writing snapshot to", filePath)
@@ -38,7 +38,7 @@ async function toMatchSvgSnapshot(
 
   const existingSnapshot = fs.readFileSync(filePath, "utf-8")
 
-  const result = await looksSame(
+  const result: any = await looksSame(
     Buffer.from(received),
     Buffer.from(existingSnapshot),
     {
@@ -75,8 +75,8 @@ async function toMatchMultipleSvgSnapshots(
   testPathOriginal: string,
   svgNames: string[],
 ): Promise<MatcherResult> {
-  const passed = []
-  const failed = []
+  const passed: any[] = []
+  const failed: any[] = []
   for (let index = 0; index < svgNames.length; index++) {
     const svgName = svgNames[index]
     const received = await receivedMaybePromise
@@ -94,7 +94,7 @@ async function toMatchMultipleSvgSnapshots(
     const updateSnapshot =
       process.argv.includes("--update-snapshots") ||
       process.argv.includes("-u") ||
-      Boolean(process.env.BUN_UPDATE_SNAPSHOTS)
+      Boolean(process.env["BUN_UPDATE_SNAPSHOTS"])
 
     if (!fs.existsSync(filePath) || updateSnapshot) {
       console.log("Writing snapshot to", filePath)
@@ -108,7 +108,7 @@ async function toMatchMultipleSvgSnapshots(
 
     const existingSnapshot = fs.readFileSync(filePath, "utf-8")
 
-    const result = await looksSame(
+    const result: any = await looksSame(
       Buffer.from(received[index] as any),
       Buffer.from(existingSnapshot),
       {
