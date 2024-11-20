@@ -2,6 +2,26 @@
 
 A custom matcher for Bun tests to compare SVG snapshots.
 
+## Quick Start
+
+The fastest way to get started is to use the CLI to initialize your project:
+
+```bash
+bunx bun-match-svg init
+```
+
+This will:
+1. Create an example test in `tests/svg.test.ts`
+2. Set up automatic preloading by creating:
+   - `tests/fixtures/preload.ts`
+   - `bunfig.toml`
+
+You can then run the example test:
+
+```bash
+bun test
+```
+
 ## Installation
 
 ```bash

@@ -3,8 +3,12 @@
   "module": "index.ts",
   "version": "0.0.6",
   "type": "module",
+  "bin": {
+    "bun-match-svg": "./cli.ts"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "biome": "^0.3.3"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
@@ -14,6 +18,8 @@
   },
   "scripts": {
     "test": "bun test",
-    "build": "echo 'no build step'"
+    "build": "echo 'no build step'",
+    "format": "biome format . --write",
+    "format:check": "biome format ."
   }
 }
