@@ -4,7 +4,6 @@ import { mkdir, writeFile } from "node:fs/promises"
 import { spawn } from "node:child_process"
 
 const EXAMPLE_TEST = `import { expect, test } from "bun:test"                                                             
- import "bun-match-svg"                                                                                                    
                                                                                                                            
  const testSvg = \`<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">                                       
    <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />                                            
@@ -13,7 +12,7 @@ const EXAMPLE_TEST = `import { expect, test } from "bun:test"
  test("svg snapshot example", async () => {                                                                                
    // First run will create the snapshot                                                                                   
    // Subsequent runs will compare against the saved snapshot                                                              
-   await expect(testSvg).toMatchSvgSnapshot(import.meta.path, "example")                                                   
+   await expect(testSvg).toMatchSvgSnapshot(import.meta.path)                                                   
  })                                                                                                                        
  `     
 
