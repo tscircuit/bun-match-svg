@@ -12,7 +12,10 @@ async function toMatchSvgSnapshot(
 ): Promise<MatcherResult> {
   const received = await receivedMaybePromise;
   const testPath = testPathOriginal.replace(/\.test\.tsx?$/, "");
-  const snapshotDir = path.join(path.dirname(testPath), "__snapshots__");
+  const snapshotDir = path.join(
+    path.dirname(testPathOriginal),
+    "__snapshots__"
+  );
   const snapshotName = svgName
     ? `${svgName}.snap.svg`
     : `${path.basename(testPath)}.snap.svg`;

@@ -1,6 +1,5 @@
-#!/usr/bin/env bun
-
 import { mkdir, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { spawn } from "node:child_process";
 
 const EXAMPLE_TEST = `import { expect, test } from "bun:test";
@@ -44,14 +43,21 @@ async function init() {
 
     await mkdir("tests/fixtures", { recursive: true });
 
-    await writeFile("tests/svg.test.ts", EXAMPLE_TEST);
-    await writeFile("tests/fixtures/preload.ts", PRELOAD_FILE);
-    await writeFile("bunfig.toml", BUNFIG);
+    const files = [
+      { path: "tests/svg.test.ts", content: EXAMPLE_TEST },
+      { path: "tests/fixtures/preload.ts", content: PRELOAD_FILE },
+      { path: "bunfig.toml", content: BUNFIG },
+    ];
 
-    console.log("✅ Installed bun-match-svg");
-    console.log("✅ Created example test in tests/svg.test.ts");
-    console.log("✅ Created preload file in tests/fixtures/preload.ts");
-    console.log("✅ Created bunfig.toml");
+    for (const file of files) {
+      if (existsSync(file.path)) {
+        console.log(`⚠️  Skipped creating ${file.path} (file already exists)`);
+        continue;
+      }
+      await writeFile(file.path, file.content);
+      console.log(`✅ Created ${file.path}`);
+    }
+
     console.log("\n🎉 You can now run: bun test");
   } catch (error) {
     console.error("❌ Error during initialization:", error);
