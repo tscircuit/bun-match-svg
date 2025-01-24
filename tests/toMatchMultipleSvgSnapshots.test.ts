@@ -1,7 +1,7 @@
-import { expect, test, beforeAll, afterAll } from "bun:test"
-import * as fs from "node:fs"
-import * as path from "node:path"
-import "../index"
+import { expect, test, beforeAll, afterAll } from "bun:test";
+import * as fs from "node:fs";
+import * as path from "node:path";
+import "../index";
 
 const testSvgs = [
   `<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
@@ -20,40 +20,46 @@ const testSvgs = [
   `<svg height="220" width="500" xmlns="http://www.w3.org/2000/svg">
   <polygon points="100,10 150,190 50,190" style="fill:lime;stroke:purple;stroke-width:3" />
 </svg>`,
-]
+];
 
-const svgNames: string[] = []
-for (let i = 0; i < testSvgs.length; i++) svgNames.push(`test${i + 1}`)
+const svgNames: string[] = [];
+for (let i = 0; i < testSvgs.length; i++) svgNames.push(`test${i + 1}`);
 
-const snapshotDir = path.join(__dirname, "__snapshots__")
+const snapshotDir = path.join(__dirname, "__snapshots__");
 const snapshotPaths = svgNames.map((svgName) =>
-  path.join(snapshotDir, `${svgName}.snap.svg`),
-)
+  path.join(snapshotDir, `${svgName}.snap.svg`)
+);
 
 beforeAll(() => {
   if (!fs.existsSync(snapshotDir)) {
-    fs.mkdirSync(snapshotDir, { recursive: true })
+    fs.mkdirSync(snapshotDir, { recursive: true });
   }
-})
+});
 
 afterAll(() => {
   for (const snapshotPath of snapshotPaths)
     if (fs.existsSync(snapshotPath)) {
-      fs.unlinkSync(snapshotPath)
+      fs.unlinkSync(snapshotPath);
     }
   if (fs.existsSync(snapshotDir)) {
-    fs.rmdirSync(snapshotDir, { recursive: true })
+    fs.rmdirSync(snapshotDir, { recursive: true });
   }
-})
+});
 
 test("toMatchMultipleSvgSnapshots creates and matches snapshots", async () => {
   // First run: create snapshot
-  await expect(testSvgs).toMatchMultipleSvgSnapshots(import.meta.path, svgNames)
+  await expect(testSvgs).toMatchMultipleSvgSnapshots(
+    import.meta.path,
+    svgNames
+  );
 
   // Verify snapshot was created
   for (const snapshotPath of snapshotPaths)
-    expect(fs.existsSync(snapshotPath)).toBe(true)
+    expect(fs.existsSync(snapshotPath)).toBe(true);
 
   // Second run: match existing snapshot
-  await expect(testSvgs).toMatchMultipleSvgSnapshots(import.meta.path, svgNames)
-})
+  await expect(testSvgs).toMatchMultipleSvgSnapshots(
+    import.meta.path,
+    svgNames
+  );
+});
