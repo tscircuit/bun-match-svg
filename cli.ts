@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import { mkdir, writeFile } from "node:fs/promises"
+import { mkdir, writeFile, access } from "node:fs/promises"
 import { spawn } from "node:child_process"
 
 const EXAMPLE_TEST = `import { expect, test } from "bun:test"                                                             
@@ -37,23 +37,43 @@ async function installDependency() {
   })
 }
 
+async function fileExists(path: string): Promise<boolean> {
+  try {
+    await access(path)
+    return true
+  } catch {
+    return false
+  }
+}
+
 async function init() {
   try {
     console.log("📦 Installing bun-match-svg...")
     await installDependency()
     
     await mkdir("tests/fixtures", { recursive: true })
-    
-    await writeFile("tests/svg.test.ts", EXAMPLE_TEST)
-    
-    await writeFile("tests/fixtures/preload.ts", PRELOAD_FILE)
-    
-    await writeFile("bunfig.toml", BUNFIG)
-    
-    console.log("✅ Installed bun-match-svg")
-    console.log("✅ Created example test in tests/svg.test.ts")
-    console.log("✅ Created preload file in tests/fixtures/preload.ts")
-    console.log("✅ Created bunfig.toml")
+
+    if (!await fileExists("tests/svg.test.ts")) {
+      await writeFile("tests/svg.test.ts", EXAMPLE_TEST)
+      console.log("✅ Created example test in tests/svg.test.ts")
+    } else {
+      console.log("🔒 tests/svg.test.ts already exists, skipping.")
+    }
+
+    if (!await fileExists("tests/fixtures/preload.ts")) {
+      await writeFile("tests/fixtures/preload.ts", PRELOAD_FILE)
+      console.log("✅ Created preload file in tests/fixtures/preload.ts")
+    } else {
+      console.log("🔒 tests/fixtures/preload.ts already exists, skipping.")
+    }
+
+    if (!await fileExists("bunfig.toml")) {
+      await writeFile("bunfig.toml", BUNFIG)
+      console.log("✅ Created bunfig.toml")
+    } else {
+      console.log("🔒 bunfig.toml already exists, skipping.")
+    }
+
     console.log("\n🎉 You can now run: bun test")
   } catch (error) {
     console.error("❌ Error during initialization:", error)
