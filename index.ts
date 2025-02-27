@@ -28,10 +28,14 @@ async function toMatchSvgSnapshot(
     Boolean(process.env["BUN_UPDATE_SNAPSHOTS"])
 
   if (!fs.existsSync(filePath) || updateSnapshot) {
-    console.log("Writing snapshot to", filePath)
+    if (updateSnapshot && fs.existsSync(filePath)) {
+      console.log("Updating snapshot at", filePath)
+    } else {
+      console.log("Writing snapshot to", filePath)
+    }
     fs.writeFileSync(filePath, received)
     return {
-      message: () => `Snapshot created at ${filePath}`,
+      message: () => `Snapshot ${updateSnapshot ? 'updated' : 'created'} at ${filePath}`,
       pass: true,
     }
   }
@@ -97,10 +101,14 @@ async function toMatchMultipleSvgSnapshots(
       Boolean(process.env["BUN_UPDATE_SNAPSHOTS"])
 
     if (!fs.existsSync(filePath) || updateSnapshot) {
-      console.log("Writing snapshot to", filePath)
+      if (updateSnapshot && fs.existsSync(filePath)) {
+        console.log("Updating snapshot at", filePath)
+      } else {
+        console.log("Writing snapshot to", filePath)
+      }
       fs.writeFileSync(filePath, received[index] as any)
       passed.push({
-        message: `Snapshot ${svgName} created at ${filePath}`,
+        message: `Snapshot ${svgName} ${updateSnapshot ? 'updated' : 'created'} at ${filePath}`,
         pass: true,
       })
       continue
