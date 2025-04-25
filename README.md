@@ -1,6 +1,15 @@
 # bun-match-svg
 
-A custom matcher for Bun tests to compare SVG snapshots.
+A custom matcher for Bun tests to compare SVG snapshots. Great for GitHub visual snapshot testing.
+
+```ts
+test("your SVG test", () => {
+  const svgContent = generateSomeSvg() // Your function to generate SVG
+  expect(svgContent).toMatchSvgSnapshot(import.meta.path, "uniqueName")
+})
+```
+
+![Github Visual Snapshot](https://github.com/user-attachments/assets/35dd7ee1-3e30-4401-827d-469561885375)
 
 ## Quick Start
 
