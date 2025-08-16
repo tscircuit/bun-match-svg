@@ -3,6 +3,7 @@
   "module": "index.ts",
   "version": "0.0.12",
   "type": "module",
+  "license": "MIT",
   "bin": {
     "bun-match-svg": "./cli.ts"
   },
