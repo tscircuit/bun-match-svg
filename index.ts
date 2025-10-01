@@ -14,7 +14,7 @@ async function toMatchSvgSnapshot(
   const testPath = testPathOriginal.replace(/\.test\.tsx?$/, "")
   const snapshotDir = path.join(path.dirname(testPath), "__snapshots__")
   const snapshotName = svgName
-    ? `${svgName}.snap.svg`
+    ? `${path.basename(testPath)}-${svgName}.snap.svg`
     : `${path.basename(testPath)}.snap.svg`
   const filePath = path.join(snapshotDir, snapshotName)
 
@@ -101,7 +101,7 @@ async function toMatchMultipleSvgSnapshots(
     const testPath = testPathOriginal.replace(/\.test\.tsx?$/, "")
     const snapshotDir = path.join(path.dirname(testPath), "__snapshots__")
     const snapshotName = svgName
-      ? `${svgName}.snap.svg`
+      ? `${path.basename(testPath)}-${svgName}.snap.svg`
       : `${path.basename(testPath)}.snap.svg`
     const filePath = path.join(snapshotDir, snapshotName)
 

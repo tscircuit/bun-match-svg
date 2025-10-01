@@ -25,9 +25,10 @@ const testSvgs = [
 const svgNames: string[] = []
 for (let i = 0; i < testSvgs.length; i++) svgNames.push(`test${i + 1}`)
 
+const testPathBase = path.basename(import.meta.path.replace(/\.test\.tsx?$/, ""))
 const snapshotDir = path.join(__dirname, "__snapshots__")
 const snapshotPaths = svgNames.map((svgName) =>
-  path.join(snapshotDir, `${svgName}.snap.svg`),
+  path.join(snapshotDir, `${testPathBase}-${svgName}.snap.svg`),
 )
 
 beforeAll(() => {
