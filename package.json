@@ -15,7 +15,8 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "looks-same": "^9.0.1"
+    "@resvg/resvg-js": "^2.6.2",
+    "@tscircuit/image-utils": "^0.0.8"
   },
   "scripts": {
     "test": "bun test",
