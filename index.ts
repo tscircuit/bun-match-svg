@@ -1,7 +1,12 @@
+import { Resvg } from "@resvg/resvg-js"
+import looksSame from "@tscircuit/image-utils/looks-same"
 import { expect, type MatcherResult } from "bun:test"
 import * as fs from "node:fs"
 import * as path from "node:path"
-import looksSame from "looks-same"
+
+/** Rasterize SVG before pixel comparison; the shared comparator accepts PNG. */
+const renderSvgToPng = (svg: string): Uint8Array =>
+  new Resvg(Buffer.from(svg)).render().asPng()
 
 async function toMatchSvgSnapshot(
   // biome-ignore lint/suspicious/noExplicitAny: bun doesn't expose
@@ -41,9 +46,11 @@ async function toMatchSvgSnapshot(
 
   const existingSnapshot = fs.readFileSync(filePath, "utf-8")
 
+  const receivedPng = renderSvgToPng(received)
+  const existingPng = renderSvgToPng(existingSnapshot)
   const result: any = await looksSame(
-    Buffer.from(received),
-    Buffer.from(existingSnapshot),
+    receivedPng,
+    existingPng,
     {
       strict: false,
       tolerance: 2,
@@ -73,12 +80,12 @@ async function toMatchSvgSnapshot(
   }
 
   const diffPath = filePath.replace(".snap.svg", ".diff.png")
-  await looksSame.createDiff({
-    reference: Buffer.from(existingSnapshot),
-    current: Buffer.from(received),
-    diff: diffPath,
+  const diffPng = await looksSame.createDiff({
+    reference: existingPng,
+    current: receivedPng,
     highlightColor: "#ff00ff",
   })
+  fs.writeFileSync(diffPath, diffPng)
 
   return {
     message: () => `Snapshot does not match. Diff saved at ${diffPath}`,
@@ -129,9 +136,11 @@ async function toMatchMultipleSvgSnapshots(
 
     const existingSnapshot = fs.readFileSync(filePath, "utf-8")
 
+    const receivedPng = renderSvgToPng(received[index] as string)
+    const existingPng = renderSvgToPng(existingSnapshot)
     const result: any = await looksSame(
-      Buffer.from(received[index] as any),
-      Buffer.from(existingSnapshot),
+      receivedPng,
+      existingPng,
       {
         strict: false,
         tolerance: 2,
@@ -164,12 +173,12 @@ async function toMatchMultipleSvgSnapshots(
     }
 
     const diffPath = filePath.replace(".snap.svg", ".diff.png")
-    await looksSame.createDiff({
-      reference: Buffer.from(existingSnapshot),
-      current: Buffer.from(received[index] as any),
-      diff: diffPath,
+    const diffPng = await looksSame.createDiff({
+      reference: existingPng,
+      current: receivedPng,
       highlightColor: "#ff00ff",
     })
+    fs.writeFileSync(diffPath, diffPng)
 
     failed.push({
       message: `Snapshot ${svgName} does not match. Diff saved at ${diffPath}`,
