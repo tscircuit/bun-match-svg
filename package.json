@@ -2,6 +2,10 @@
   "name": "bun-match-svg",
   "module": "index.ts",
   "version": "0.0.16",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tscircuit/bun-match-svg.git"
+  },
   "type": "module",
   "license": "MIT",
   "bin": {
