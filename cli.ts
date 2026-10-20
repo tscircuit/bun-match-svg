@@ -1,6 +1,12 @@
 #!/usr/bin/env bun
 
-import { mkdir, writeFile, access, readFile, appendFile } from "node:fs/promises"
+import {
+  mkdir,
+  writeFile,
+  access,
+  readFile,
+  appendFile,
+} from "node:fs/promises"
 import { spawn } from "node:child_process"
 
 const EXAMPLE_TEST = `import { expect, test } from "bun:test"                                                             
@@ -14,20 +20,36 @@ const EXAMPLE_TEST = `import { expect, test } from "bun:test"
    // Subsequent runs will compare against the saved snapshot                                                              
    await expect(testSvg).toMatchSvgSnapshot(import.meta.path)                                                   
  })                                                                                                                        
- `     
+ `
 
 const PRELOAD_FILE = `import "bun-match-svg"`
 
 const BUNFIG = `[test]
 preload = ["./tests/fixtures/preload.ts"]`
 
-export async function installDependency() {
+export async function bunInit() {
   return new Promise((resolve, reject) => {
-    const install = spawn('bun', ['add', '-d', 'bun-match-svg'], {
-      stdio: 'inherit'
+    const initProcess = spawn("bun", ["init", "-y"], {
+      stdio: "inherit",
     })
 
-    install.on('close', (code) => {
+    initProcess.on("close", (code) => {
+      if (code === 0) {
+        resolve(undefined)
+      } else {
+        reject(new Error(`bun init failed with code ${code}`))
+      }
+    })
+  })
+}
+
+export async function installDependency() {
+  return new Promise((resolve, reject) => {
+    const install = spawn("bun", ["add", "-d", "bun-match-svg"], {
+      stdio: "inherit",
+    })
+
+    install.on("close", (code) => {
       if (code === 0) {
         resolve(undefined)
       } else {
@@ -48,32 +70,41 @@ export async function fileExists(path: string): Promise<boolean> {
 
 export async function init() {
   try {
+    if (!(await fileExists("package.json"))) {
+      console.log("🚀 Initializing bun project...")
+      await bunInit()
+    } else {
+      console.log("🔒 package.json already exists, skipping bun init.")
+    }
+
     console.log("📦 Installing bun-match-svg...")
     await installDependency()
-    
+
     await mkdir("tests/fixtures", { recursive: true })
 
-    if (!await fileExists("tests/svg.test.ts")) {
+    if (!(await fileExists("tests/svg.test.ts"))) {
       await writeFile("tests/svg.test.ts", EXAMPLE_TEST)
       console.log("✅ Created example test in tests/svg.test.ts")
     } else {
       console.log("🔒 tests/svg.test.ts already exists, skipping.")
     }
 
-    if (!await fileExists("tests/fixtures/preload.ts")) {
+    if (!(await fileExists("tests/fixtures/preload.ts"))) {
       await writeFile("tests/fixtures/preload.ts", PRELOAD_FILE)
       console.log("✅ Created preload file in tests/fixtures/preload.ts")
     } else {
       console.log("🔒 tests/fixtures/preload.ts already exists, skipping.")
     }
 
-    if (!await fileExists("bunfig.toml")) {
+    if (!(await fileExists("bunfig.toml"))) {
       await writeFile("bunfig.toml", BUNFIG)
       console.log("✅ Created bunfig.toml")
     } else {
       const bunfigContent = await readFile("bunfig.toml", "utf-8")
       if (bunfigContent.includes('preload = ["./tests/fixtures/preload.ts"]')) {
-        console.log("🔒 bunfig.toml already has preload configuration, skipping.")
+        console.log(
+          "🔒 bunfig.toml already has preload configuration, skipping.",
+        )
       } else if (bunfigContent.match(/^\s*\[test\]\s*$/m)) {
         const updatedContent = bunfigContent.replace(
           /(^\s*\[test\]\s*$)/m,

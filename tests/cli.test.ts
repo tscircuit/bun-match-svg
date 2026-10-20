@@ -17,6 +17,7 @@ const tempDir = path.join(__dirname, "cli-test-temp")
 const originalCwd = process.cwd()
 
 describe("cli init", () => {
+  let bunInitSpy: Mock<typeof cli.bunInit>
   let installSpy: Mock<typeof cli.installDependency>
   let consoleSpy: Mock<typeof console.log>
 
@@ -30,7 +31,10 @@ describe("cli init", () => {
 
   beforeEach(async () => {
     process.chdir(tempDir)
-    installSpy = spyOn(cli, "installDependency").mockImplementation(async () => {})
+    bunInitSpy = spyOn(cli, "bunInit").mockImplementation(async () => {})
+    installSpy = spyOn(cli, "installDependency").mockImplementation(
+      async () => {},
+    )
     consoleSpy = spyOn(console, "log").mockImplementation(() => {})
   })
 
@@ -40,6 +44,7 @@ describe("cli init", () => {
     for (const file of files) {
       await fs.rm(path.join(tempDir, file), { recursive: true, force: true })
     }
+    bunInitSpy.mockRestore()
     installSpy.mockRestore()
     consoleSpy.mockRestore()
   })
@@ -47,6 +52,7 @@ describe("cli init", () => {
   test("should create files and config on a fresh project", async () => {
     await cli.init()
 
+    expect(bunInitSpy).toHaveBeenCalledTimes(1)
     expect(installSpy).toHaveBeenCalledTimes(1)
 
     // Check files
@@ -64,14 +70,18 @@ describe("cli init", () => {
 
     // Check console logs
     const logs = consoleSpy.mock.calls.flat().join("\n")
+    expect(logs).toContain("🚀 Initializing bun project...")
     expect(logs).toContain("✅ Created example test in tests/svg.test.ts")
-    expect(logs).toContain("✅ Created preload file in tests/fixtures/preload.ts")
+    expect(logs).toContain(
+      "✅ Created preload file in tests/fixtures/preload.ts",
+    )
     expect(logs).toContain("✅ Created bunfig.toml")
   })
 
   test("should skip creating files that already exist", async () => {
     // Pre-create files
     await fs.mkdir("tests/fixtures", { recursive: true })
+    await fs.writeFile("package.json", "{}")
     await fs.writeFile("tests/svg.test.ts", "test")
     await fs.writeFile("tests/fixtures/preload.ts", "preload")
     await fs.writeFile(
@@ -81,7 +91,10 @@ describe("cli init", () => {
 
     await cli.init()
 
+    expect(bunInitSpy).toHaveBeenCalledTimes(0)
+
     const logs = consoleSpy.mock.calls.flat().join("\n")
+    expect(logs).toContain("🔒 package.json already exists, skipping bun init.")
     expect(logs).toContain("🔒 tests/svg.test.ts already exists, skipping.")
     expect(logs).toContain(
       "🔒 tests/fixtures/preload.ts already exists, skipping.",
